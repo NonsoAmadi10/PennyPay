@@ -6,10 +6,10 @@
   "repository": "git@github.com:NonsoAmadi10/PennyPay.git",
   "author": "NonsoAmadi10 <nonsoamadi@aol.com>",
   "license": "MIT",
-  "private": null,
+  "private": false,
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon ./src/index.ts",
+    "dev": "export NODE_ENV=development && nodemon ./src/index.ts",
     "start": "yarn build && node ./build/index.js"
   },
   "dependencies": {

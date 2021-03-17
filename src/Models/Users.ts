@@ -1,10 +1,13 @@
-import mongoose, { Schema, Document, Model, HookNextFunction } from 'mongoose';
+import mongoose, { Schema, HookNextFunction } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IUser} from '../Interfaces'
 
 const HASH_ROUNDS = 10;
 
-interface Iuser extends IUser, Document {}
+interface Iuser extends IUser, mongoose.Document {
+  password:string,
+  isVerified: boolean;
+}
 
 const userSchema = new Schema({
   fullname: {
@@ -27,11 +30,11 @@ const userSchema = new Schema({
     unique: true
   },
 
-  createdAt: {
-    type: Date,
-    default: Date.now
+  isVerified: {
+    type: Boolean,
+    default: false
   }
-});
+}, {timestamps: true});
 
 userSchema.pre<Iuser>("save", async (next:HookNextFunction) => {
   const thisObj = this as unknown as Iuser;

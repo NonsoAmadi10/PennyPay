@@ -129,3 +129,5 @@ class SendEmail {
 
 
 }
+
+export default SendEmail;

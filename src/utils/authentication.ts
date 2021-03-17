@@ -28,8 +28,8 @@ class Authentication {
   public static async getToken(payload:any, expiresIn = '24h') {
     const token = jwt.sign({
       id: payload.id,
-      role: payload.role,
-      username: payload.username,
+      email: payload.email,
+      fullname: payload.fullname,
     }, SALT, {
       expiresIn
     });
