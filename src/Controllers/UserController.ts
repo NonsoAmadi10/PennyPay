@@ -1,4 +1,4 @@
-import User from '../models/Users';
+import { User, Wallet } from '../models';
 import { Request, Response } from 'express';
 import { Authentication, SendMail, Helper } from '../utils';
 
@@ -107,6 +107,7 @@ class UserController{
     try {
       const findUser = await User.findOneAndUpdate({ _id: req.decoded.id }, { isVerified: true }, {new:true});
       if (findUser) {
+        const createWallet = await Wallet.create({ balance: 0.0, user: findUser._id });
           const isEmailSent = await SendMail.confirmRegistrationComplete(findUser.email);
           if (isEmailSent) {
             const createToken = await Authentication.getToken(findUser);
@@ -114,6 +115,7 @@ class UserController{
               success: true,
               message: `User ${findUser.fullname} created successfully`,
               token: createToken,
+              wallet: createWallet
             }
             return Helper.requestSuccessful(res, payload, 201);
           }

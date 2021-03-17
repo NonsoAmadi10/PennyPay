@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Decimal128, Document, Number } from "mongoose";
 
 interface IUser extends Document{
   fullname: string;
@@ -9,4 +9,9 @@ interface IUser extends Document{
   validatePassword(password: string): boolean;
 }
 
-export { IUser };
+interface IWallet extends Document {
+  balance: number;
+  user: string;
+}
+
+export { IUser, IWallet };
