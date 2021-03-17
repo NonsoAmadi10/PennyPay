@@ -1,12 +1,11 @@
 import sendGrid from '@sendgrid/mail';
+import { config } from 'dotenv';
 
-let baseUrl:string  |undefined  = '';
+config();
+
+let baseUrl: any = process.env.SENDGRID_URL 
 const API_KEY: any = process.env.SENDGRID_API_KEY
-if (process.env.NODE_ENV !== 'production') {
-  baseUrl = process.env.SENDGRID_DEVELOPMENT__URL;
-} else {
-  baseUrl = process.env.SENDGRID_PRODUCTION__URL;
-}
+
 
 /* eslint-disable max-len */
 /**

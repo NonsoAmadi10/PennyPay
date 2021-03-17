@@ -67,7 +67,7 @@ import { NextFunction, Request, Response } from 'express';
    * @param {object} error - The error object from sequelize.
    * @returns {object} res - The HTTP response object
    */
-  static sequelizeValidationError(res, error) {
+  static sequelizeValidationError(res:Response, error:any) {
     if (error.errors[0].type === 'notNull Violation') {
       res.status(400).json({
         success: false,

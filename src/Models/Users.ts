@@ -4,10 +4,7 @@ import { IUser} from '../Interfaces'
 
 const HASH_ROUNDS = 10;
 
-interface Iuser extends IUser, mongoose.Document {
-  password:string,
-  isVerified: boolean;
-}
+
 
 const userSchema = new Schema({
   fullname: {
@@ -36,8 +33,8 @@ const userSchema = new Schema({
   }
 }, {timestamps: true});
 
-userSchema.pre<Iuser>("save", async (next:HookNextFunction) => {
-  const thisObj = this as unknown as Iuser;
+userSchema.pre<IUser>("save", async function ( this:IUser, next:HookNextFunction){
+  const thisObj = this ;
 
   if (!this.isModified('password')) {
     return next();
@@ -53,8 +50,9 @@ userSchema.pre<Iuser>("save", async (next:HookNextFunction) => {
 });
 
 userSchema.methods.validatePassword = async function (pass: string) {
-  return bcrypt.compare(pass, this.password);
+  let user = <IUser>this;
+  return bcrypt.compare(pass, user.password);
 };
 
 
-export default mongoose.model<Iuser>('User', userSchema);
+export default mongoose.model<IUser>('User', userSchema);
