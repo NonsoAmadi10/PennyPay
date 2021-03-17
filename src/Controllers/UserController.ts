@@ -115,7 +115,7 @@ class UserController{
               success: true,
               message: `User ${findUser.fullname} created successfully`,
               token: createToken,
-              wallet: createWallet
+              wallet: createWallet.toJSON()
             }
             return Helper.requestSuccessful(res, payload, 201);
           }
