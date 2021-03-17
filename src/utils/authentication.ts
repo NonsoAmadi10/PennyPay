@@ -42,9 +42,9 @@ class Authentication {
    * @param {string} token - token input
    * @returns {req} - populate the request with the decrypted content
    */
-  static async verifyToken(token:string){
+  public static async verifyToken(token:string): Promise<any>{
     const reshuffledToken = shuffleToken(token);
-    let output = {};
+    let output:any = {};
     return jwt.verify(
       reshuffledToken, SALT, (err:any, decoded:any) => {
         if (err) {

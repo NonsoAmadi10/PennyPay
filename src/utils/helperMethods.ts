@@ -12,10 +12,10 @@ import { NextFunction, Request, Response } from 'express';
    * @param {String} message - The error message you want to set.
    * @returns {object} res - The HTTP response object
    */
-  public static serverError(res: Response, message:string) {
+  public static serverError(res: Response, message:string = 'Internal server error') {
     return res.status(500).json({
       success: false,
-      message: message || 'Internal server error',
+      message
     });
   }
 
@@ -26,7 +26,7 @@ import { NextFunction, Request, Response } from 'express';
    * @param {number} status = Status code of the client error
    * @returns {object} res - The HTTP response object
    */
-  public static clientError(res:Response, message:string, status = 400) {
+  public static clientError(res:Response, message:string | object, status = 400) {
     return res.status(status).json({
       success: false,
       message,
@@ -61,20 +61,7 @@ import { NextFunction, Request, Response } from 'express';
     next();
   }
 
-  /**
-   * A method used to send sequelize validation error
-   * @param {object} res - HTTP response object
-   * @param {object} error - The error object from sequelize.
-   * @returns {object} res - The HTTP response object
-   */
-  static sequelizeValidationError(res:Response, error:any) {
-    if (error.errors[0].type === 'notNull Violation') {
-      res.status(400).json({
-        success: false,
-        message: `The "${error.errors[0].path}" field is required`,
-      });
-    }
-  }
+  
 }
 
 export default HelperMethods;

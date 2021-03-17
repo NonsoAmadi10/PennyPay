@@ -30,7 +30,7 @@ class SendEmail {
                 <h2 style="text-align: center; color: white;
                  padding-top: 10px;">Penny Pay</h2>
             </div>
-            <h4 style="text-align: center">Hi! ${fullname}</h4>
+            <h4 style="text-align: center">Hi ${fullname} !</h4>
           </div>
           <div style=" padding: 0px 20px 20px 20px">
             <div>
@@ -40,7 +40,7 @@ class SendEmail {
               <button style="color: white; background-color: #2084ba;
                border: none; border-radius: 10px; text-align: center;
                 padding: 10px;">
-                <a  href="${baseUrl}/auth/verify_email?token=${token}"
+                <a  href="${baseUrl}/api/auth/verify_email?token=${token}"
                  style="text-decoration: none;
                  color: white;">Verify Account</a></button>
             </div>

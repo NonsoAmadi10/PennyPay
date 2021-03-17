@@ -32,6 +32,18 @@ class Sanitize {
 
     return next();
   }
+
+  static signinSanitizer(req:Request, res:Response, next:NextFunction) {
+    const {
+      password, email,
+    } = req.body;
+    const response = (error:any) => res.status(400).send({ status: 'error', error });
+    if (Validator.checkEmpty(email)) return response('email cannot be empty');
+    if (Validator.checkEmpty(password)) return response('password cannot be empty');
+    if (!Validator.isEmail(email)) return response('invalid email');
+
+    return next();
+  }
 }
 
 export default Sanitize;

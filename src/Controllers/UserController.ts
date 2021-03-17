@@ -92,6 +92,95 @@ class UserController{
     }
     
   }
+
+
+    /**
+   * Verify a user's email
+   * Route: POST: /auth/verify_email
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof UserController
+   */
+
+  public static async verifyEmail(req: any, res: Response):Promise<Response> {
+    try {
+      const findUser = await User.findOneAndUpdate({ _id: req.decoded.id }, { isVerified: true }, {new:true});
+      if (findUser) {
+          const isEmailSent = await SendMail.confirmRegistrationComplete(findUser.email);
+          if (isEmailSent) {
+            const createToken = await Authentication.getToken(findUser);
+            const payload = {
+              success: true,
+              message: `User ${findUser.fullname} created successfully`,
+              token: createToken,
+            }
+            return Helper.requestSuccessful(res, payload, 201);
+          }
+      }
+      console.log(findUser);
+      return Helper
+        .serverError(res, 'Could not complete your registration. '
+          + 'Please re-register.');
+    } catch (error) {
+      return Helper.serverError(res, error);
+      }
+  }
+  
+
+
+  
+  /**
+   * Login a user
+   * Route: POST: /auth/login
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof UserController
+   */
+   public static async login(req:Request, res:Response) {
+    try {
+      const {
+        email,
+        password
+      } = req.body;
+      const userFound = await User.findOne({email});
+      if (!userFound) {
+        return Helper.clientError(res, 'Email or password does not exist', 400);
+      }
+      if (!userFound.isVerified) {
+        return Helper.clientError(res, {
+          success: false,
+          message: 'You had started the registration process already. '
+            + 'Please check your email to complete your registration.'
+        }, 400);
+      }
+      const isPasswordValid = await userFound.validatePassword(password);
+      if (userFound && isPasswordValid) {
+        const tokenCreated = await Authentication.getToken({
+          id: userFound._id,
+          fullname: userFound.fullname,
+          email: userFound.email,
+        });
+        if (tokenCreated) {
+          const userDetails = {
+            id: userFound._id,
+            token: tokenCreated,
+          };
+          return Helper.requestSuccessful(res, {
+            success: true,
+            message: 'Login successful',
+            userDetails,
+          }, 200);
+        }
+        return Helper.serverError(res);
+      }
+      return Helper.clientError(res, 'Email or password does not exist', 400);
+    } catch (error) {
+      return Helper.serverError(res);
+    }
+  }
+
 }
 
 export default UserController;
