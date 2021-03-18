@@ -1,4 +1,4 @@
-import { Decimal128, Document, Number } from "mongoose";
+import {  Document } from "mongoose";
 
 interface IUser extends Document{
   fullname: string;
@@ -14,4 +14,24 @@ interface IWallet extends Document {
   user: string;
 }
 
-export { IUser, IWallet };
+enum TransactionType {
+  debit,
+  credit
+}
+
+enum Purpose {
+  deposit,
+  transfer,
+  bills
+}
+interface ITransaction extends Document {
+  txn_type: TransactionType;
+  purpose: Purpose,
+  amount: number;
+  reference: string;
+  preBalance: number;
+  postBalance: number;
+
+}
+
+export { IUser, IWallet, ITransaction };
