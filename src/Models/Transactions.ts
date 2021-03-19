@@ -16,7 +16,7 @@ const transactionSchema = new Schema({
   },
 
   amount: {
-    type: Schema.Types.Decimal128
+    type: String
   },
 
   reference: {
@@ -26,15 +26,20 @@ const transactionSchema = new Schema({
   },
 
   preBalance: {
-    type: Schema.Types.Decimal128,
+    type: Number,
     required: true
   },
 
   postBalance: {
-    type: Schema.Types.Decimal128,
+    type: Number,
     required: true
+  },
+
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }
-});
+}, {timestamps:true});
 
 
 const decimal2JSON = (v:any, i?:any, prev?:any) => {

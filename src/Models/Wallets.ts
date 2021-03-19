@@ -3,15 +3,15 @@ import { IWallet} from '../Interfaces';
 
 const walletSchema = new Schema({
   balance: {
-    type: Schema.Types.Decimal128,
-    default: 0.0
+    type: Number,
+    default: 0
   },
 
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
   }
-});
+},{ timestamps: true});
 
 const decimal2JSON = (v:any, i?:any, prev?:any) => {
   if (v !== null && typeof v === 'object') {

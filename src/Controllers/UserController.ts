@@ -107,7 +107,7 @@ class UserController{
     try {
       const findUser = await User.findOneAndUpdate({ _id: req.decoded.id }, { isVerified: true }, {new:true});
       if (findUser) {
-        const createWallet = await Wallet.create({ balance: 0.0, user: findUser._id });
+        const createWallet = await Wallet.create({ balance: '0.0', user: findUser._id });
           const isEmailSent = await SendMail.confirmRegistrationComplete(findUser.email);
           if (isEmailSent) {
             const createToken = await Authentication.getToken(findUser);

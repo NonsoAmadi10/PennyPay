@@ -29,8 +29,9 @@ interface ITransaction extends Document {
   purpose: Purpose,
   amount: number;
   reference: string;
-  preBalance: number;
-  postBalance: number;
+  preBalance: string;
+  postBalance: string;
+  user: any;
 
 }
 
