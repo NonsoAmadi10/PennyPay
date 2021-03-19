@@ -14,9 +14,10 @@ class WalletController{
   public static async getWallet(req:any, res:Response):Promise<Response>{
     const { id } = req.params;
     try {
-      const getMyWallet = await Wallet.findOne({ _id: id, user: req.decoded.id });
+      const getMyWallet = await Wallet.findOne({ _id: id, user: req.decoded.id }).lean();
       if (getMyWallet) {
-        return Helper.requestSuccessful(res, getMyWallet, 200);
+        const data = getMyWallet;
+        return Helper.requestSuccessful(res, data , 200);
       }
 
       return Helper.clientError(res, 'Wallet does not exist', 400);
