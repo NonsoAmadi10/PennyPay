@@ -1,5 +1,6 @@
 import { Authentication, Helper } from '../utils';
-import {  Response, NextFunction } from 'express';
+import { NextFunction } from 'express';
+import { IRequest, IResponse } from '../Interfaces'
 
 /**
  * Class representing the Authentication methods
@@ -18,7 +19,7 @@ class Authorization {
    * @returns {object} res - Response object containing an error due
    * to invalid token or no token in the request
    */
-  static async checkToken(req:any, res:Response, next:NextFunction) {
+  static async checkToken(req:IRequest, res:IResponse, next:NextFunction) {
     const token = req.headers['x-access-token'] || req.query.token || req.body.token;
     if (!token) return Helper.clientError(res, 'User not authorized', 401);
     const verifiedToken = await Authentication.verifyToken(token);

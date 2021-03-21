@@ -1,27 +1,24 @@
 import { Wallet, Transaction } from '../models';
+import { IWallet } from '../Interfaces';
+import { v4 } from 'uuid';
 
-const creditAccount = async (wallet_id: string, amount: Number, purpose: string) => {
+const creditAccount = async (wallet: IWallet, amount: Number, purpose: string) => {
   
 
   try {
-
-    const findWallet = await Wallet.findById(wallet_id);
+    const newBalance = Number(wallet.balance) + Number(amount);
+    const updateBalance = await Wallet.findByIdAndUpdate(wallet._id, { balance: newBalance }, {new:true});
   
-  if (!findWallet) {
-    return {
-      success: false,
-      error: 'Wallet does not exist'
-    }
-    }
+
     
-    const updateBalance = await findWallet.updateOne({ $inc: { balance: amount.toFixed(2) } });
     
     await Transaction.create({
       amount: String(amount.toFixed(2)),
-      txn_type: 'debit',
+      txn_type: 'credit',
       purpose,
-      preBalance: findWallet.balance,
-      postBalance: updateBalance.balance
+      reference: v4(),
+      preBalance: wallet.balance,
+      postBalance: newBalance
     });
 
     return {
@@ -30,7 +27,8 @@ const creditAccount = async (wallet_id: string, amount: Number, purpose: string)
       wallet: updateBalance
     }
 
-   } catch (err) {
+  } catch (err) {
+    console.log(err)
     return {
       success: false,
       error: 'An error occured, please try again'
@@ -40,38 +38,39 @@ const creditAccount = async (wallet_id: string, amount: Number, purpose: string)
 }
 
 
-const debitAccount = async (wallet_id: string, amount: Number, purpose: string) => {
+const debitAccount = async (wallet: IWallet, amount: Number, purpose: string) => {
   try {
 
-    const findWallet = await Wallet.findById(wallet_id);
-  
-  if (!findWallet) {
-    return {
-      success: false,
-      error: 'Wallet does not exist'
-    }
-    }
-
-    const updateBalance = await findWallet.updateOne({ $inc: { balance: - amount.toFixed(2) } });
+    if (Number(amount) < Number(wallet.balance.toFixed(2))) {
+      const newBalance = Number(wallet.balance) - Number(amount);
+      const updateBalance = await Wallet.findByIdAndUpdate(wallet._id, { balance: newBalance }, { new: true});
     
-    await Transaction.create({
-      amount: String(amount.toFixed(2)),
-      txn_type: 'debit',
-      purpose,
-      preBalance: findWallet.balance,
-      postBalance: updateBalance.balance
-    });
+      await Transaction.create({
+        amount: String(amount.toFixed(2)),
+        txn_type: 'debit',
+        purpose,
+        reference: v4(),
+        preBalance: wallet.balance,
+        postBalance: newBalance
+      });
 
-    return {
-      success: true,
-      message: 'Debit Successful!',
-      wallet: updateBalance
+      return {
+        success: true,
+        message: 'Debit Successful!',
+        wallet: updateBalance
+      }
     }
 
-   } catch (err) {
     return {
       success: false,
-      error: 'Wallet does not exist'
+      error: 'insufficient balance'
+    }
+
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      error: 'An error occured, Please try again!'
     }
     }
 }

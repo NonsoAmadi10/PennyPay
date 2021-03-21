@@ -1,5 +1,6 @@
 import { User, Wallet } from '../models';
 import { Request, Response } from 'express';
+import { IRequest } from '../Interfaces';
 import { Authentication, SendMail, Helper } from '../utils';
 
 
@@ -103,11 +104,11 @@ class UserController{
    * @memberof UserController
    */
 
-  public static async verifyEmail(req: any, res: Response):Promise<Response> {
+  public static async verifyEmail(req: IRequest, res: Response):Promise<Response> {
     try {
       const findUser = await User.findOneAndUpdate({ _id: req.decoded.id }, { isVerified: true }, {new:true});
       if (findUser) {
-        const createWallet = await Wallet.create({ balance: '0.0', user: findUser._id });
+        const createWallet = await Wallet.create({ balance: 0.0, user: findUser._id });
           const isEmailSent = await SendMail.confirmRegistrationComplete(findUser.email);
           if (isEmailSent) {
             const createToken = await Authentication.getToken(findUser);
@@ -115,12 +116,12 @@ class UserController{
               success: true,
               message: `User ${findUser.fullname} created successfully`,
               token: createToken,
-              wallet: createWallet.toJSON()
+              wallet: createWallet
             }
             return Helper.requestSuccessful(res, payload, 201);
           }
       }
-      console.log(findUser);
+      
       return Helper
         .serverError(res, 'Could not complete your registration. '
           + 'Please re-register.');

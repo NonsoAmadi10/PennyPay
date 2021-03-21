@@ -1,9 +1,11 @@
 import { WalletsController } from '../controllers';
-import { Express } from 'express';
+import Sanitizer from '../middlewares/sanitize';
+
 import Authorization from '../middlewares/authorization';
+import WalletController from '../controllers/WalletsController';
 
 
-const walletRoute = (app: Express) => {
+const walletRoute = (app:any) => {
   
   app.get(
     '/api/v1/wallet/:id',
@@ -13,6 +15,17 @@ const walletRoute = (app: Express) => {
     WalletsController.getWallet
   );
 
+  app.patch('/api/v1/wallet/fund/:id',
+    Authorization.checkToken,
+    Sanitizer.walletSanitizer,
+    WalletController.fundWallet
+  )
+  
+  app.patch('/api/v1/wallet/withdraw/:id',
+    Authorization.checkToken,
+    Sanitizer.walletSanitizer,
+    WalletController.withdrawFund
+  )
 }
 
 export default walletRoute;

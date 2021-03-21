@@ -1,4 +1,15 @@
 import {  Document } from "mongoose";
+import { Request, Response } from 'express';
+
+
+
+interface IRequest extends Request {
+  decoded?: any
+}
+
+interface IResponse extends Response {}
+
+
 
 interface IUser extends Document{
   fullname: string;
@@ -27,7 +38,7 @@ enum Purpose {
 interface ITransaction extends Document {
   txn_type: TransactionType;
   purpose: Purpose,
-  amount: number;
+  amount: number;  
   reference: string;
   preBalance: string;
   postBalance: string;
@@ -35,4 +46,6 @@ interface ITransaction extends Document {
 
 }
 
-export { IUser, IWallet, ITransaction };
+
+
+export { IUser, IWallet, ITransaction, IRequest, IResponse };
