@@ -16,9 +16,14 @@ const authRoutes = (app: Express) => {
     UserController.verifyEmail
   );
 
-  app.post('/api/auth/sign_in',
+  app.post('/api/auth/signin',
     Sanitize.signinSanitizer,
   UserController.login
+  )
+
+  app.get('/api/user/profile',
+  Authorization.checkToken,
+  UserController.getUserInfo
   )
 }
 

@@ -1,6 +1,6 @@
 import { User, Wallet } from '../models';
 import { Request, Response } from 'express';
-import { IRequest } from '../Interfaces';
+import { IRequest, IResponse, IUser } from '../Interfaces';
 import { Authentication, SendMail, Helper } from '../utils';
 
 
@@ -182,6 +182,27 @@ class UserController{
     } catch (error) {
       return Helper.serverError(res);
     }
+  }
+
+  public static async getUserInfo(req: IRequest, res: IResponse): Promise<IResponse> {
+
+    const { id } = req.decoded;
+    try {
+      const findUser:IUser | any = await User.findById(id);
+      const userInfo:any = {
+        email: findUser.email,
+        bvn: findUser.bvn,
+        fullname: findUser.fullname,
+        isVerified: findUser.isVerified
+      }
+      if (findUser) {
+        return Helper.requestSuccessful(res, userInfo, 200);
+      }
+      return Helper.clientError(res, 'User does not exist', 200)
+     } catch (error) {
+      return Helper.serverError(res);
+    }
+    
   }
 
 }
