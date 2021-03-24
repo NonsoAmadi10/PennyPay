@@ -2,7 +2,7 @@ import { Wallet, Transaction } from '../models';
 import { IWallet } from '../Interfaces';
 import { v4 } from 'uuid';
 
-const creditAccount = async (wallet: IWallet, amount: Number, purpose: string) => {
+const creditAccount = async (wallet: IWallet, amount: Number, purpose: string, ...rest:any| null) => {
   
 
   try {
@@ -18,7 +18,8 @@ const creditAccount = async (wallet: IWallet, amount: Number, purpose: string) =
       purpose,
       reference: v4(),
       preBalance: wallet.balance,
-      postBalance: newBalance
+      postBalance: newBalance,
+      ...rest
     });
 
     return {
@@ -38,7 +39,7 @@ const creditAccount = async (wallet: IWallet, amount: Number, purpose: string) =
 }
 
 
-const debitAccount = async (wallet: IWallet, amount: Number, purpose: string) => {
+const debitAccount = async (wallet: IWallet, amount: Number, purpose: string, ...rest:any | null) => {
   try {
 
     if (Number(amount) < Number(wallet.balance.toFixed(2))) {
@@ -51,7 +52,8 @@ const debitAccount = async (wallet: IWallet, amount: Number, purpose: string) =>
         purpose,
         reference: v4(),
         preBalance: wallet.balance,
-        postBalance: newBalance
+        postBalance: newBalance,
+        ...rest
       });
 
       return {

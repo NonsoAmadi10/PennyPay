@@ -12,11 +12,21 @@ const transactionSchema = new Schema({
   purpose: {
     type: String,
     required: true,
-    enum: ['deposit', 'transfer', 'bills', 'withdrawal']
+    enum: ['deposit', 'transfer', 'bills', 'withdrawal', 'p2p']
   },
 
   amount: {
     type: String
+  },
+
+  receipient: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+
+  sender: {
+    type: Schema.Types.ObjectId,
+    ref: "User"
   },
 
   reference: {

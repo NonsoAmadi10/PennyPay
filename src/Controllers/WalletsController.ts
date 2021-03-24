@@ -72,6 +72,31 @@ class WalletController{
     }
   }
 
+  public static async peerTopeer(req: IRequest, res: IResponse): Promise<IResponse> {
+    const { username, amount, user } = { username: req.body.username, amount: req.body.amount, user: req.decoded.id };
+
+    try {
+      const findUserWallet = await Wallet.findById(user);
+      const findPeerWallet = await Wallet.findOne({ username });
+
+      if (findUserWallet && findPeerWallet) {
+        const debitWallet = await debitAccount(findUserWallet, amount, 'p2p', { receipient: findPeerWallet.user })
+        const creditPeerWallet = await creditAccount(findPeerWallet, amount, 'p2p', { sender: findUserWallet.user });
+        
+        if (creditPeerWallet.success) {
+          debitWallet.message = `Your Transaction to ${username} was successful!`
+          return Helper.requestSuccessful(res, debitWallet, 200);
+        }
+        return Helper.clientError(res, 'An Error Occured, please try again', 400)
+      }
+
+      return Helper.clientError(res, 'The Peer User is not a verified PennyPay User!', 400);
+     } catch (err) {
+      return Helper.serverError(res)
+    }
+
+  }
+
 }
 
 

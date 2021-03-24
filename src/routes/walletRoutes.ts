@@ -26,6 +26,11 @@ const walletRoute = (app:any) => {
     Sanitizer.walletSanitizer,
     WalletController.withdrawFund
   )
+
+  app.post('/api/v1/wallet/transfer/p2p',
+  
+    WalletController.peerTopeer
+  )
 }
 
 export default walletRoute;
