@@ -41,9 +41,9 @@ class UserController{
   public static async register(req:Request, res:Response): Promise<Response> {
     
     const { body } = req;
-    const { email, password, fullname } = body;
+    const { email, password, fullname, username } = body;
 
-    const findUser = await User.findOne({ email });
+    const findUser = await User.findOne({ email, username });
 
     try {
       if (findUser) {
@@ -72,7 +72,7 @@ class UserController{
         }
       }
   
-      const userCreated = await User.create({ email, fullname, password });
+      const userCreated = await User.create({ email, fullname, password, username });
   
       if (userCreated && userCreated._id) {
         const isEmailSent = await UserController.createTokenAndSendEmail(userCreated);
@@ -164,6 +164,7 @@ class UserController{
           id: userFound._id,
           fullname: userFound.fullname,
           email: userFound.email,
+          username: userFound.username
         });
         if (tokenCreated) {
           const userDetails = {
@@ -193,7 +194,8 @@ class UserController{
         email: findUser.email,
         bvn: findUser.bvn,
         fullname: findUser.fullname,
-        isVerified: findUser.isVerified
+        isVerified: findUser.isVerified,
+        username: findUser.username
       }
       if (findUser) {
         return Helper.requestSuccessful(res, userInfo, 200);

@@ -28,7 +28,8 @@ const walletRoute = (app:any) => {
   )
 
   app.post('/api/v1/wallet/transfer/p2p',
-  
+    Authorization.checkToken,
+    Sanitizer.p2pSanitizer,
     WalletController.peerTopeer
   )
 }

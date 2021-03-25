@@ -29,7 +29,7 @@ const userSchema = new Schema({
 
   bvn: {
     type: String,
-    unique: true
+    default: "0"
   },
 
   isVerified: {

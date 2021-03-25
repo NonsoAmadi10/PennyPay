@@ -29,6 +29,7 @@ class Authentication {
     const token = jwt.sign({
       id: payload.id,
       email: payload.email,
+      username: payload.username,
       fullname: payload.fullname,
     }, SALT, {
       expiresIn
@@ -57,6 +58,7 @@ class Authentication {
             success: true,
             id: decoded.id,
             email: decoded.email,
+            username: decoded.username,
             fullname: decoded.fullname,
           };
         }

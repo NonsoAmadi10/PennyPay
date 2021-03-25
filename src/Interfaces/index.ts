@@ -16,6 +16,7 @@ interface IUser extends Document{
   email: string;
   password: string;
   bvn: string;
+  username: string;
   isVerified: boolean;
   validatePassword(password: string): boolean;
 }

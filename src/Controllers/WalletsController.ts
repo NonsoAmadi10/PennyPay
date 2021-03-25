@@ -1,5 +1,5 @@
-import { IRequest, IResponse } from '../Interfaces'
-import { Wallet } from '../models';
+import { IRequest, IResponse, IUser } from '../Interfaces'
+import { Wallet, User } from '../models';
 import { Helper } from '../utils'
 import { debitAccount, creditAccount } from '../helpers';
 
@@ -76,22 +76,28 @@ class WalletController{
     const { username, amount, user } = { username: req.body.username, amount: req.body.amount, user: req.decoded.id };
 
     try {
-      const findUserWallet = await Wallet.findById(user);
-      const findPeerWallet = await Wallet.findOne({ username });
-
+      const findUserWallet = await Wallet.findOne({ user });
+    
+      const findPeer:IUser | any = await User.findOne({ username });
+      const findPeerWallet = await Wallet.findOne({ user: findPeer._id  });
+      
       if (findUserWallet && findPeerWallet) {
         const debitWallet = await debitAccount(findUserWallet, amount, 'p2p', { receipient: findPeerWallet.user })
         const creditPeerWallet = await creditAccount(findPeerWallet, amount, 'p2p', { sender: findUserWallet.user });
-        
-        if (creditPeerWallet.success) {
-          debitWallet.message = `Your Transaction to ${username} was successful!`
-          return Helper.requestSuccessful(res, debitWallet, 200);
+        debitWallet.message = `Your transaction to ${username} was successful!`
+
+        if (!creditPeerWallet.success || !debitWallet.success) {
+          debitWallet.message = `Your transaction to ${username} failed!`
+          return Helper.clientError(res,  debitWallet, 400)
+          
         }
-        return Helper.clientError(res, 'An Error Occured, please try again', 400)
+        return Helper.requestSuccessful(res, debitWallet, 200);
+        
       }
 
       return Helper.clientError(res, 'The Peer User is not a verified PennyPay User!', 400);
-     } catch (err) {
+    } catch (err) {
+      console.log(err)
       return Helper.serverError(res)
     }
 

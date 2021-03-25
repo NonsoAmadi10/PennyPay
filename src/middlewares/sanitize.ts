@@ -49,6 +49,18 @@ class Sanitize {
   public static async walletSanitizer(req: IRequest, res: IResponse, next: NextFunction) {
     const { amount } = req.body;
     const response = (error: any) => res.status(400).send({ status: 'error', error });
+    
+    if (Validator.checkEmpty(amount)) return response('Your are missing the amount field');
+    if (!Validator.itsaNumber(amount)) return response('amount field must be of a number type');
+    
+    return next();
+  }
+
+  public static async p2pSanitizer(req: IRequest, res: IResponse, next: NextFunction) {
+    const { amount, username } = req.body;
+    const response = (error: any) => res.status(400).send({ status: 'error', error });
+    
+    if (Validator.checkEmpty(username)) return response('Your are missing the username field');
     if (Validator.checkEmpty(amount)) return response('Your are missing the amount field');
     if (!Validator.itsaNumber(amount)) return response('amount field must be of a number type');
     
